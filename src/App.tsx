@@ -415,26 +415,36 @@ export default function App() {
           
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { name: "@pedro_robt", text: "Material direto ao ponto. Consegui organizar meus estudos muito melhor. Aprovado na GCM de Curitiba!", platform: "Instagram" },
-              { name: "Mariana Silva", text: "Finalmente encontrei uma apostila focada no que realmente cai. O mapeamento técnico é sensacional.", platform: "WhatsApp" },
-              { name: "@luca.s.trind", text: "Estudava por materiais genéricos e não evoluía. Com esse material meu rendimento subiu 40% em um mês.", platform: "Instagram" },
-              { name: "Anderson Oliveira", text: "Recomendo para todos os meus alunos que querem ingressar na carreira de Guarda Municipal.", platform: "WhatsApp" },
-              { name: "@anaaaa.marquess", text: "A plataforma é muito intuitiva e o material em PDF é muito bem diagramado. Vale cada centavo.", platform: "Instagram" },
+              { name: "@pedro_robt", avatar: "https://i.ibb.co/yBcQNdzS/download-23.jpg", text: "Material direto ao ponto mesmo. Consegui organizar meus estudos muito melhor. Partiu aprovação SP 🚀", platform: "Instagram" },
+              { name: "Mariana Silva", avatar: "https://i.ibb.co/hR4FZYFw/download-24.jpg", text: "Finalmente encontrei uma apostila focada no que realmente cai. O mapeamento técnico é sensacional.", platform: "WhatsApp" },
+              { name: "@luca.s.trind", avatar: "https://i.ibb.co/PvP7t4Kc/Taurus-baby.jpg", text: "Estudava por uns material ai bem fraco na internet e não evoluia nada. Com esse material meu estudo melhorou ai uns 40% em um mês", platform: "Instagram" },
+              { name: "Anderson Oliveira", avatar: "https://i.ibb.co/hRHGyNxM/Hugo-Simplement-gay-beard-bearded-boy-hairy-hairyguy-french-frenchguy-frenchgay-fr.jpg", text: "Eu tenho um amigo que tá estudando comigo. Eu recomendei pra ele e agora estamos os dois estudando juntos. Vamo 💪", platform: "WhatsApp" },
+              { name: "@anaaaa.marquess", avatar: "https://i.ibb.co/0jShjpwF/download-22.jpg", text: "A plataforma é muito intuitiva e o material em PDF é muito bem diagramado. Vale cada centavo.", platform: "Instagram" },
             ].map((dep, i) => (
               <motion.div 
                 key={i}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="bg-navy-800 p-6 rounded-2xl border border-white/5 relative"
+                className="bg-navy-800 p-6 rounded-2xl border border-white/5 relative flex flex-col justify-between"
               >
-                <div className="flex gap-1 text-amber-400 mb-4">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+                <div>
+                  <div className="flex gap-1 text-amber-400 mb-4">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+                  </div>
+                  <p className="text-slate-300 italic mb-6">"{dep.text}"</p>
                 </div>
-                <p className="text-slate-300 italic mb-6">"{dep.text}"</p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-white">{dep.name}</span>
-                  <span className="text-xs px-2 py-1 rounded bg-white/5 text-slate-400">{dep.platform}</span>
+                <div className="flex items-center justify-between mt-auto">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src={dep.avatar} 
+                      alt={dep.name} 
+                      className="w-10 h-10 rounded-full object-cover border border-neon-blue/30"
+                      referrerPolicy="no-referrer"
+                    />
+                    <span className="font-bold text-white text-sm">{dep.name}</span>
+                  </div>
+                  <span className="text-[10px] px-2 py-1 rounded bg-white/5 text-slate-400 uppercase tracking-wider">{dep.platform}</span>
                 </div>
               </motion.div>
             ))}
