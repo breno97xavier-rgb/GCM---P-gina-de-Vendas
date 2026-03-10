@@ -745,11 +745,15 @@ export default function App() {
 
                 <ul className="space-y-3 mb-10 flex-grow">
                   {[
-                    "Tudo do Plano Essencial",
+                    "Material Teórico Completo",
+                    "Questões Gabaritadas Inéditas",
+                    "Mapas Mentais Esquematizados",
+                    "Plataforma de Estudos Personalizada",
                     "Simulados Esquematizados",
                     "Redação Discursiva",
                     "Como Estudar com PDFs",
                     "Controle Emocional",
+                    "Disciplina de Ferro",
                     "Atualizações Prioritárias",
                     "Suporte Vip 24h"
                   ].map((item, i) => (
