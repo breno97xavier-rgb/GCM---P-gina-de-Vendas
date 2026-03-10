@@ -89,11 +89,91 @@ const AccordionItem: React.FC<{ title: string; content: string; isOpen: boolean;
   </div>
 );
 
+const CountdownTimer = ({ compact = false }: { compact?: boolean }) => {
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setHours(24, 0, 0, 0);
+      const diff = tomorrow.getTime() - now.getTime();
+
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      return { hours, minutes, seconds };
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatNumber = (num: number) => num.toString().padStart(2, '0');
+
+  if (compact) {
+    return (
+      <div className="mt-6 pt-6 border-t border-white/5">
+        <p className="text-[10px] text-slate-500 uppercase font-bold mb-3 tracking-widest">Oferta expira em:</p>
+        <div className="flex justify-center items-center gap-3">
+          {[
+            { label: 'H', value: timeLeft.hours },
+            { label: 'M', value: timeLeft.minutes },
+            { label: 'S', value: timeLeft.seconds }
+          ].map((item, i) => (
+            <React.Fragment key={item.label}>
+              <div className="flex flex-col items-center">
+                <div className="text-xl font-black text-neon-blue tracking-tighter">
+                  {formatNumber(item.value)}
+                </div>
+              </div>
+              {i < 2 && <div className="text-lg font-black text-white/20">:</div>}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center mb-10 bg-navy-800/30 p-8 rounded-3xl border border-neon-blue/20">
+      <h3 className="text-neon-blue font-black text-xl md:text-2xl mb-2 uppercase tracking-tighter">
+        OFERTA PROMOCIONAL DISPONÍVEL POR TEMPO LIMITADO
+      </h3>
+      <p className="text-slate-400 text-sm mb-8">
+        Aproveite o acesso promocional ao material completo antes que o valor volte ao normal.
+      </p>
+      <div className="flex justify-center items-center gap-3 md:gap-6">
+        {[
+          { label: 'HH', value: timeLeft.hours },
+          { label: 'MM', value: timeLeft.minutes },
+          { label: 'SS', value: timeLeft.seconds }
+        ].map((item, i) => (
+          <React.Fragment key={item.label}>
+            <div className="flex flex-col items-center">
+              <div className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+                {formatNumber(item.value)}
+              </div>
+              <span className="text-[10px] text-slate-500 mt-1 font-bold">{item.label}</span>
+            </div>
+            {i < 2 && <div className="text-4xl md:text-6xl font-black text-neon-blue/50 mb-4">:</div>}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // --- Main App ---
 
 export default function App() {
   const [openAccordion, setOpenAccordion] = useState<number | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const plansRef = useRef<HTMLElement>(null);
 
   const scrollToPlans = () => {
@@ -147,14 +227,14 @@ export default function App() {
               <span>MATERIAL 100% ATUALIZADO</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tighter">
-              CONCURSO GCM <br />
-              <span className="text-neon-blue text-glow">GUARDA CIVIL MUNICIPAL</span>
+              MAIS DE 25 MIL VAGAS PARA <br />
+              <span className="text-neon-blue text-glow uppercase">Guarda Civil Municipal em todo o Brasil</span>
             </h1>
             <p className="text-xl text-slate-300 font-medium mb-4">
-              Material completo baseado em padrões reais de editais de Guarda Civil Municipal.
+              Comece hoje sua preparação com o <strong>material baseado nos editais reais das provas de Guarda Municipal</strong>.
             </p>
             <p className="text-lg text-slate-400 mb-8 max-w-xl">
-              Compilado estratégico dos conteúdos que mais aparecem nas provas de GCM em todo o Brasil.
+              Salários iniciais entre <strong>R$ 2.500 e R$ 5.500</strong>, dependendo do município.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -187,6 +267,54 @@ export default function App() {
           </motion.div>
         </div>
       </header>
+
+      {/* NEW SECTION: POR QUE BUSCAR GCM */}
+      <section className="py-24 px-6 bg-navy-950 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        <div className="max-w-7xl mx-auto">
+          <SectionTitle>
+            Por que milhares de pessoas buscam o concurso de Guarda Municipal
+          </SectionTitle>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { 
+                icon: "🛡️", 
+                title: "Estabilidade no serviço público", 
+                desc: "Cargo efetivo com segurança profissional e estabilidade após o estágio probatório." 
+              },
+              { 
+                icon: "💰", 
+                title: "Salários iniciais atrativos", 
+                desc: "Remuneração média entre R$ 2.500 e R$ 5.500, dependendo da cidade." 
+              },
+              { 
+                icon: "📈", 
+                title: "Crescimento na carreira", 
+                desc: "Possibilidade de progressão e aumento salarial ao longo dos anos." 
+              },
+              { 
+                icon: "🏙️", 
+                title: "Concursos frequentes em todo o Brasil", 
+                desc: "Prefeituras abrem concursos regularmente para reforçar a segurança municipal." 
+              }
+            ].map((item, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-navy-900/50 p-8 rounded-2xl border border-white/5 hover:border-neon-blue/30 transition-all text-center"
+              >
+                <div className="text-4xl mb-6">{item.icon}</div>
+                <h4 className="text-lg font-bold text-white mb-4">{item.title}</h4>
+                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 2 — SEÇÃO "O PADRÃO OCULTO DOS EDITAIS" */}
       <section className="py-24 px-6 bg-navy-900/50">
@@ -368,27 +496,64 @@ export default function App() {
           </SectionTitle>
         </div>
         
-        <div 
-          className="relative flex overflow-hidden group"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onClick={() => setIsPaused(!isPaused)}
-        >
-          <div className={`flex gap-6 animate-scroll ${isPaused ? 'pause-scroll' : ''}`}>
-            {[...galleryImages, ...galleryImages].map((img, i) => (
-              <div key={i} className="w-[300px] md:w-[400px] shrink-0">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {galleryImages.slice(0, 5).map((img, i) => (
+              <motion.div 
+                key={i}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="cursor-pointer group relative"
+                onClick={() => setSelectedImage(img)}
+              >
+                <div className="absolute inset-0 bg-neon-blue/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center z-10">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
                 <img 
                   src={img} 
                   alt={`Página ${i}`} 
-                  className="w-full h-auto rounded-xl border border-white/10 shadow-2xl"
+                  className="w-full h-auto rounded-xl border border-white/10 shadow-xl"
                   referrerPolicy="no-referrer"
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
-        <p className="text-center text-slate-500 text-sm mt-8">Clique na imagem para pausar/retomar a rolagem</p>
+        <p className="text-center text-slate-500 text-sm mt-12 uppercase tracking-widest font-bold">Clique nas páginas para ampliar o conteúdo</p>
       </section>
+
+      {/* LIGHTBOX MODAL */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-navy-950/95 flex items-center justify-center p-4 md:p-10"
+            onClick={() => setSelectedImage(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-4xl w-full max-h-full overflow-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 p-2 rounded-full text-white transition-colors"
+                onClick={() => setSelectedImage(null)}
+              >
+                <XCircle className="w-8 h-8" />
+              </button>
+              <img 
+                src={selectedImage} 
+                alt="Preview do Material" 
+                className="w-full h-auto rounded-2xl shadow-[0_0_50px_rgba(59,130,246,0.3)] border border-white/10"
+                referrerPolicy="no-referrer"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 7 — SEÇÃO "MAPEAMENTO TÉCNICO UNIVERSAL" */}
       <section className="py-24 px-6">
@@ -558,40 +723,48 @@ export default function App() {
             </motion.div>
 
             {/* Plano 3: Combo Aprovação (O Mais Atrativo) */}
-            <motion.div 
-              whileHover={{ y: -15 }}
-              className="bg-navy-800 p-8 rounded-3xl border-2 border-neon-blue relative flex flex-col glow-blue shadow-[0_0_40px_rgba(59,130,246,0.2)] z-10 scale-105"
-            >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-navy-950 text-xs font-black px-6 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
-                O Mais Vendido
-              </div>
-              <h3 className="text-2xl font-black text-white mb-2 flex items-center gap-2">
-                Combo Aprovação <Zap className="w-5 h-5 text-amber-400 fill-amber-400" />
-              </h3>
-              <p className="text-neon-blue font-semibold text-sm mb-6">O arsenal definitivo para sua vaga</p>
-              <div className="text-5xl font-black text-white mb-8 flex items-baseline gap-1">
-                <span className="text-lg font-normal text-slate-400">R$</span> 48,90
-              </div>
-              <ul className="space-y-3 mb-10 flex-grow">
-                {[
-                  "Tudo do Plano Essencial",
-                  "Simulados Esquematizados",
-                  "Redação Discursiva",
-                  "Como Estudar com PDFs",
-                  "Controle Emocional",
-                  "Atualizações Prioritárias",
-                  "Suporte Vip 24h"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-white font-medium">
-                    <Check className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <a href="https://pay.wiapy.com/SMVdhXaWOI" target="_blank" rel="noopener noreferrer">
-                <CTAButton className="w-full py-5 text-xl !bg-emerald-500 hover:!bg-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-105 shadow-xl">QUERO A MINHA APROVAÇÃO</CTAButton>
-              </a>
-            </motion.div>
+            <div className="flex flex-col">
+              <motion.div 
+                whileHover={{ y: -15 }}
+                className="bg-navy-800 p-8 rounded-3xl border-2 border-neon-blue relative flex flex-col glow-blue shadow-[0_0_40px_rgba(59,130,246,0.2)] z-10 scale-105 h-full"
+              >
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-navy-950 text-xs font-black px-6 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
+                  MAIS ESCOLHIDO
+                </div>
+                <h3 className="text-2xl font-black text-white mb-2 flex items-center gap-2">
+                  Combo Aprovação <Zap className="w-5 h-5 text-amber-400 fill-amber-400" />
+                </h3>
+                <p className="text-neon-blue font-semibold text-sm mb-6">O arsenal definitivo para sua vaga</p>
+                
+                <div className="mb-8">
+                  <div className="text-sm text-slate-500 line-through mb-1">De R$ 96,90</div>
+                  <div className="text-5xl font-black text-white flex items-baseline gap-1">
+                    <span className="text-lg font-normal text-slate-400">Por R$</span> 48,90
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-10 flex-grow">
+                  {[
+                    "Tudo do Plano Essencial",
+                    "Simulados Esquematizados",
+                    "Redação Discursiva",
+                    "Como Estudar com PDFs",
+                    "Controle Emocional",
+                    "Atualizações Prioritárias",
+                    "Suporte Vip 24h"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-white font-medium">
+                      <Check className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <a href="https://pay.wiapy.com/SMVdhXaWOI" target="_blank" rel="noopener noreferrer">
+                  <CTAButton className="w-full py-5 text-xl !bg-emerald-500 hover:!bg-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-105 shadow-xl">ACESSO IMEDIATO</CTAButton>
+                </a>
+                <CountdownTimer compact />
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
